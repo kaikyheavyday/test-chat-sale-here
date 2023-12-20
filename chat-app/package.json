@@ -10,8 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "node-sass": "^9.0.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-redux": "^9.0.4",
+    "redux": "^5.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
@@ -21,6 +24,8 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
+    "sass": "^1.69.5",
+    "socket.io-client": "^4.7.2",
     "vite": "^5.0.8"
   }
 }
