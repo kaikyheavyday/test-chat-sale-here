@@ -37,6 +37,10 @@ body,
         color: #383838;
         font-weight: 600;
       }
+      .button-group {
+        display: flex;
+        gap: 10px;
+      }
       input {
         height: 60px;
         text-align: center;
@@ -48,6 +52,7 @@ body,
         outline: none;
       }
       button {
+        cursor: pointer;
         border: none;
         color: #ffffff;
         background-image: radial-gradient(
@@ -56,10 +61,17 @@ body,
           #b31315 100%
         );
         border-radius: 20px;
-        padding: 20px 35px;
+        padding: 20px 45px;
         font-family: "Prompt", sans-serif;
         font-size: 24px;
         margin-top: 20px;
+        &.text {
+          color: #6f6f6f;
+          background: none;
+          &:hover {
+            color: #c41417;
+          }
+        }
       }
     }
   }

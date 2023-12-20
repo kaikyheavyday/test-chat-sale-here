@@ -1,29 +1,23 @@
-import { useState, useEffect } from "react";
-
-import { socket } from "./libs/socket";
-
 import Logo from "./assets/images/logo.png";
+import Home from "./modules/Home";
+import Addroom from "./modules/Addroom";
+import FindRoom from "./modules/FindRoom";
+import { Routes, Route, Link } from "react-router-dom";
 function App() {
-  const [name, setName] = useState("");
-  const handleSubmitName = () => {
-    socket.emit("add:user", name);
-  };
-
   return (
     <div className="app">
       <img src={Logo} alt="logo" className="logo" width={150} />
       <div className="container">
-        <div className="form-name">
-          <h2 className="title">ชื่อของคุณ</h2>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => {
-              setName(e.target.value);
-            }}
-          />
-          {name && <button onClick={handleSubmitName}>ยืนยัน</button>}
-        </div>
+        <>
+          <Routes>
+            <Route path="/">
+              <Route index element={<Home />} />
+              <Route path="/add-room" element={<Addroom />} />
+              <Route path="/find-room" element={<FindRoom />} />
+              <Route path="*" element={<Home />} />
+            </Route>
+          </Routes>
+        </>
       </div>
     </div>
   );
