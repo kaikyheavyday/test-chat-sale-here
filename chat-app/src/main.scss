@@ -78,6 +78,7 @@ body,
       }
     }
     .room {
+      height: 100%;
       .title {
         padding: 10px;
         margin: 0;
@@ -89,7 +90,7 @@ body,
         background-color: #9999992a;
         width: 95%;
         margin: auto;
-        min-height: 500px;
+        min-height: 70%;
         .room-container {
           display: flex;
           flex-direction: column;
