@@ -20,7 +20,11 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    console.log(profile);
+    if (profile.id) {
+      localStorage.setItem("profile", JSON.stringify(profile));
+    } else {
+      localStorage.removeItem("profile");
+    }
   }, [profile]);
   return (
     <>

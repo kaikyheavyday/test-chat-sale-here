@@ -2,7 +2,9 @@ import Logo from "./assets/images/logo.png";
 import Home from "./modules/Home";
 import Addroom from "./modules/Addroom";
 import FindRoom from "./modules/FindRoom";
-import { Routes, Route, Link } from "react-router-dom";
+import Room from "./modules/Room";
+import { Routes, Route } from "react-router-dom";
+
 function App() {
   return (
     <div className="app">
@@ -14,6 +16,7 @@ function App() {
               <Route index element={<Home />} />
               <Route path="/add-room" element={<Addroom />} />
               <Route path="/find-room" element={<FindRoom />} />
+              <Route path="/room/:roomId" element={<Room />} />
               <Route path="*" element={<Home />} />
             </Route>
           </Routes>

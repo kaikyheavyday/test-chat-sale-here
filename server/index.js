@@ -3,17 +3,13 @@ import express from "express";
 import { createServer } from "node:http";
 import { Server } from "socket.io";
 
-// mock db, ใช้เก็บข้อมูล user ที่ login เข้ามา
-const users = [];
-const rooms = [];
+let users = [];
+let rooms = [];
 
 const app = express();
 
-// 1. สร้าง `server` ด้วย `app` โดยใช้ `createServer` จาก `node:http`
 const server = createServer(app);
 
-// 2. สร้าง `io` โดยใช้ `new Server` จาก `socket.io`
-// 3 ทำการ enable cors เนื่องจาก client และ server คนละ port กัน
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
@@ -21,42 +17,65 @@ const io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected", socket.id);
+  let userIndex = users.findIndex((user) => user.id === socket.id);
+  if (userIndex === -1) {
+    const payload = {
+      id: socket.id,
+      name: socket.id,
+      status: "online",
+    };
+    users.push(payload);
+  }
 
   socket.on("add:user", (name) => {
-    let userIndex = users.findIndex((user) => user.id === socket.id);
-    if (userIndex === -1) {
-      const payload = {
-        id: socket.id,
-        name: name,
-        status: "online",
-      };
-      users.push(payload);
-      io.emit("get:user", payload);
+    const userIndex = users.findIndex((user) => user.id === socket.id);
+    if (userIndex !== -1) {
+      users[userIndex].name = name;
+      io.emit(
+        "get:user",
+        users.find((user) => user.id === socket.id)
+      );
+    } else {
+      io.emit("get:user", null);
     }
   });
 
-  // socket.on("chat:message", (msg) => {
-  //   console.log("message: " + JSON.stringify(msg));
+  socket.on("add:room", (roomName) => {
+    const payload = {
+      roomName: roomName,
+      messages: [],
+    };
+    rooms.push(payload);
+    io.emit("get:room", payload);
+  });
 
-  //   io.emit("chat:message", {
-  //     ...msg,
-  //     id: socket.id + new Date().getTime(),
-  //   });
-  //   socket.broadcast.emit("chat:typing", { isTyping: false });
-  // });
+  socket.on("find:room", (roomName) => {
+    const isHaveroom = rooms.find((room) => room.roomName === roomName);
+    io.emit("find:room", isHaveroom ? roomName : "");
+  });
 
-  // socket.on("chat:typing", (msg) => {
-  //   console.log("typing: " + JSON.stringify(msg));
+  socket.on("chat:message", ({ message, roomId }) => {
+    const indexRoom = rooms.findIndex((room) => room.roomName === roomId);
+    if (indexRoom !== -1) {
+      const userName = users.find((user) => user.id === socket.id).name;
+      const payload = {
+        text: message,
+        userId: socket.id,
+        userName: userName,
+      };
+      rooms[indexRoom].messages.push(payload);
+      io.emit("get:message", rooms[indexRoom].messages);
+    }
+  });
 
-  //   // ส่งข้อความไปหา client ทุกคน ยกเว้นตัวผู้ส่ง (sender)
-  //   socket.broadcast.emit("chat:typing", msg);
-  // });
+  socket.on("get:message", (roomId) => {
+    const indexRoom = rooms.findIndex((room) => room.roomName === roomId);
+    if (indexRoom !== -1) {
+      io.emit("get:message", rooms[indexRoom].messages);
+    }
+  });
 
   socket.on("disconnect", () => {
-    console.log(`user ${socket.id} disconnected`);
-
-    // ลบ user ที่ออกจากการเชื่อมต่อออกจาก array
     const index = users.findIndex((user) => user.id === socket.id);
     users.splice(index, 1);
 
@@ -74,7 +93,6 @@ app.get("/", (req, res) => {
   res.json({ message: "Hello World" });
 });
 
-// 4. เปลี่ยน `app.listen` เป็น `server.listen`
 server.listen(APP_PORT, () => {
   console.log(`App running on port ${APP_PORT}`);
 });

@@ -1,13 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { socket } from "../libs/socket";
 
 export default function AddRoom() {
   const navigate = useNavigate();
+
   const [room, setRoom] = useState("");
 
   const handleSubmitRoom = () => {
-    console.log("test");
-    //socket add room and navigate
+    if (!room) {
+      alert("กรุณาใส่ชื่อห้อง");
+    }
+    socket.emit("add:room", room);
+    socket.on("get:room", (data) => {
+      navigate(`/room/${data.roomName}`);
+    });
   };
   return (
     <div className="form-name">
